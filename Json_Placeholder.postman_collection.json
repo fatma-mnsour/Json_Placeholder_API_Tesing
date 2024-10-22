@@ -1,0 +1,705 @@
+{
+	"info": {
+		"_postman_id": "8c8387ee-78c9-406c-b7a3-4e7879070afe",
+		"name": "Json_Placeholder",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "34855259"
+	},
+	"item": [
+		{
+			"name": "Posts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"verify first post\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[0].id).to.eql(1);\r",
+							"    pm.expect(jsonData[0].title).to.eql(\"sunt aut facere repellat provident occaecati excepturi optio reprehenderit\");\r",
+							"\r",
+							"});\r",
+							"pm.test(\"verify last post\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[99].id).to.eql(100);\r",
+							"    pm.expect(jsonData[99].title).to.eql(\"at nam consequatur ea labore ea harum\");\r",
+							"\r",
+							"});\r",
+							"//save the response in a json format\r",
+							"var jsonData = pm.response.json();\r",
+							"//define a counter\r",
+							"var id_count = 0;\r",
+							"//iterate through the response \r",
+							"jsonData.forEach(function(item){\r",
+							"if(item.hasOwnProperty('id')){\r",
+							"id_count++;\r",
+							"}\r",
+							"});\r",
+							"var expected_count=100;\r",
+							"\r",
+							"pm.test(\"verify id count\", function () {\r",
+							"pm.expect(id_count).to.eql(expected_count);\r",
+							"});\r",
+							"//show in console\r",
+							"console.log(\"print IDs: \"+id_count);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_URL_JSON}}/posts",
+					"host": [
+						"{{Base_URL_JSON}}"
+					],
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "specific post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify post ID\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.id).to.eql(parseInt(pm.variables.get(\"POST_ID\")));\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//to make sure it iterates through all posts, each post in seperate iteration\r",
+							"//get current iteration number and make POST_ID = itearion number\r",
+							"const iteration_num = pm.info.iteration;\r",
+							"pm.collectionVariables.set(\"POST_ID\",(iteration_num+1).toString());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_URL_JSON}}/posts/{{POST_ID}}",
+					"host": [
+						"{{Base_URL_JSON}}"
+					],
+					"path": [
+						"posts",
+						"{{POST_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Comments_path",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//to make sure it iterates through all posts, each post in seperate iteration\r",
+							"//get current iteration number and make POST_ID = itearion number\r",
+							"const iteration_num = pm.info.iteration;\r",
+							"pm.collectionVariables.set(\"POST_ID\",(iteration_num+1).toString());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify post ID\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[0].postId).to.eql(parseInt(pm.variables.get(\"POST_ID\")));\r",
+							"});\r",
+							"var jsonData = pm.response.json();\r",
+							"var comments_count=0;\r",
+							"jsonData.forEach(function(item){\r",
+							"    if(item.hasOwnProperty('id')){\r",
+							"        comments_count++;\r",
+							"    }\r",
+							"});\r",
+							"var Expected_number =5;\r",
+							"pm.test(\"verify total counf of Comments\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(Expected_number).to.eql(comments_count);\r",
+							"});\r",
+							"//print\r",
+							"console.log(\"counted Comments: \",comments_count);\r",
+							"\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_URL_JSON}}/posts/{{POST_ID}}/comments",
+					"host": [
+						"{{Base_URL_JSON}}"
+					],
+					"path": [
+						"posts",
+						"{{POST_ID}}",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Comments_query",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify post ID\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData[0].postId).to.eql(parseInt(pm.variables.get(\"POST_ID\")));\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_URL_JSON}}/comments?postId={{POST_ID}}",
+					"host": [
+						"{{Base_URL_JSON}}"
+					],
+					"path": [
+						"comments"
+					],
+					"query": [
+						{
+							"key": "postId",
+							"value": "{{POST_ID}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Users List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"var usersnum=0;\r",
+							"jsonData.forEach(function(item){\r",
+							"    if(item.hasOwnProperty('id')){\r",
+							"        usersnum++;\r",
+							"    }\r",
+							"});\r",
+							"var expectedUsers=10;\r",
+							"\r",
+							"pm.test(\"verify users number\", function () {\r",
+							"    pm.expect(expectedUsers).to.eql(usersnum);\r",
+							"});\r",
+							"pm.test(\"get specific user\", function () {\r",
+							"    \r",
+							"    pm.expect(jsonData[0].id).to.eql(parseInt(pm.variables.get(\"UserId\")));\r",
+							"    pm.expect(jsonData[0].name).to.eql(\"Leanne Graham\")\r",
+							"    pm.expect(jsonData[0].address.street).to.eql(\"Kulas Light\")\r",
+							"    pm.expect(jsonData[0].address.geo.lat).to.eql(\"-37.3159\")\r",
+							"    pm.expect(jsonData[0].company.catchPhrase).to.eql(\"Multi-layered client-server neural-net\")\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_URL_JSON}}/users",
+					"host": [
+						"{{Base_URL_JSON}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Specific User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"get specific user\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.id).to.eql(parseInt(pm.variables.get(\"UserId\")));\r",
+							"    pm.expect(jsonData.name).to.eql(\"Leanne Graham\")\r",
+							"    pm.expect(jsonData.address.street).to.eql(\"Kulas Light\")\r",
+							"    pm.expect(jsonData.address.geo.lat).to.eql(\"-37.3159\")\r",
+							"    pm.expect(jsonData.company.catchPhrase).to.eql(\"Multi-layered client-server neural-net\")\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//to make sure it iterates through all posts, each post in seperate iteration\r",
+							"//get current iteration number and make POST_ID = itearion number\r",
+							"const iteration_num = pm.info.iteration;\r",
+							"pm.collectionVariables.set(\"UserId\",(iteration_num+1).toString());"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_URL_JSON}}/users/{{UserId}}",
+					"host": [
+						"{{Base_URL_JSON}}"
+					],
+					"path": [
+						"users",
+						"{{UserId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Specific User Not Found",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Verify User Not Found\", function () {\r",
+							"    pm.response.to.have.status(404);\r",
+							"    if (pm.response.code === 404){\r",
+							"        pm.collectionVariables.set(\"Skip_Verification_Request\",pm.info.requestName);\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_URL_JSON}}/users/11",
+					"host": [
+						"{{Base_URL_JSON}}"
+					],
+					"path": [
+						"users",
+						"11"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "specific user albums",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"var useAlbumsnum=0;\r",
+							"jsonData.forEach(function(item){\r",
+							"    if(item.hasOwnProperty('id')){\r",
+							"        useAlbumsnum++;\r",
+							"    }\r",
+							"});\r",
+							"var expectedUserAlbums=10;\r",
+							"\r",
+							"pm.test(\"verify user albums number\", function () {\r",
+							"    pm.expect(expectedUserAlbums).to.eql(useAlbumsnum);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_URL_JSON}}/users/{{UserId}}/albums",
+					"host": [
+						"{{Base_URL_JSON}}"
+					],
+					"path": [
+						"users",
+						"{{UserId}}",
+						"albums"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "specific user Todos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"var userTodosnum=0;\r",
+							"jsonData.forEach(function(item){\r",
+							"    if(item.hasOwnProperty('id')){\r",
+							"        userTodosnum++;\r",
+							"    }\r",
+							"});\r",
+							"var expectedUserTodos=20;\r",
+							"\r",
+							"pm.test(\"verify user todos number\", function () {\r",
+							"    pm.expect(expectedUserTodos).to.eql(userTodosnum);\r",
+							"});\r",
+							"pm.test(\"Your test name\", function () {\r",
+							"    pm.expect(jsonData[0].id).to.eql(parseInt(pm.variables.get(\"UserId\")));\r",
+							"    pm.expect(jsonData[19].title).to.eql(\"ullam nobis libero sapiente ad optio sint\");\r",
+							"});\r",
+							"pm.test(\"Verify completed status of all posts\", function () {\r",
+							"    var jsonData = pm.response.json(); // Get response data\r",
+							"    \r",
+							"    // Define the expected completed status for each post \r",
+							"    var expectedCompletedStatus = {\r",
+							"        1: false,\r",
+							"        2: false,\r",
+							"        3: false,\r",
+							"        4: true,\r",
+							"        5: false,\r",
+							"        6: false,\r",
+							"        7: false,\r",
+							"        8: true,\r",
+							"        9: false,\r",
+							"        10: true,\r",
+							"        11: true,\r",
+							"        12: true,\r",
+							"        13: false,\r",
+							"        14: true,\r",
+							"        15: true,\r",
+							"        16: true,\r",
+							"        17: true,\r",
+							"        18: false,\r",
+							"        19: true,\r",
+							"        20: true\r",
+							"    };\r",
+							"\r",
+							"    // Check if response contains an array of posts\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"\r",
+							"    // Iterate through each post and verify its completed status\r",
+							"    jsonData.forEach(function(post) {\r",
+							"        var expectedStatus = expectedCompletedStatus[post.id]; // Get the expected status for this post's ID\r",
+							"        pm.expect(post.completed).to.eql(expectedStatus); // Compare the actual and expected statuses\r",
+							"    });\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Base_URL_JSON}}/users/{{UserId}}/todos",
+					"host": [
+						"{{Base_URL_JSON}}"
+					],
+					"path": [
+						"users",
+						"{{UserId}}",
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add posts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.title).to.eql(\"foo\");\r",
+							"    pm.expect(jsonData.body).to.eql(\"bar\");\r",
+							"    pm.expect(jsonData.id).to.eql(101);\r",
+							"    pm.expect(jsonData.userId).to.eql(1);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": " {\r\n    \"title\" : \"foo\",\r\n    \"body\": \"bar\",\r\n    \"userId\": 1\r\n }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Base_URL_JSON}}/posts",
+					"host": [
+						"{{Base_URL_JSON}}"
+					],
+					"path": [
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "edit post_PUT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"very data edited successfully\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.id).to.eql(parseInt(pm.variables.get(\"POST_ID\")));\r",
+							"     pm.expect(jsonData.id).to.eql(parseInt(pm.variables.get(\"UserId\")));\r",
+							"    pm.expect(jsonData.title).to.eql(\"foo\");\r",
+							"    pm.expect(jsonData.body).to.eql(\"bar\");\r",
+							"\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": 1,\r\n    \"title\": \"foo\",\r\n    \"body\": \"bar\",\r\n    \"userId\": 1\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Base_URL_JSON}}/posts/{{POST_ID}}",
+					"host": [
+						"{{Base_URL_JSON}}"
+					],
+					"path": [
+						"posts",
+						"{{POST_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "edit post_PATCH",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"very data edited successfully\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.title).to.eql(\"foo\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"foo\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{Base_URL_JSON}}/posts/{{POST_ID}}",
+					"host": [
+						"{{Base_URL_JSON}}"
+					],
+					"path": [
+						"posts",
+						"{{POST_ID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete specific post",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{Base_URL_JSON}}/posts/{{POST_ID}}",
+					"host": [
+						"{{Base_URL_JSON}}"
+					],
+					"path": [
+						"posts",
+						"{{POST_ID}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"\r",
+					"pm.test(\"Response time is less than 400ms\", function () {\r",
+					"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+					"});\r",
+					"if(pm.info.requestName !== pm.collectionVariables.get(\"Skip_Verification_Request\")){\r",
+					"    //perform the test\r",
+					"pm.test(\"satus code is ok\", function () {\r",
+					"    pm.expect(pm.response.code).to.be.oneOf([200,201, 202]);\r",
+					"});\r",
+					"}\r",
+					"else{\r",
+					"    //skip the test\r",
+					"    pm.test.skip(\"test skipped for this request\")\r",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Base_URL_JSON",
+			"value": "https://jsonplaceholder.typicode.com",
+			"type": "string"
+		},
+		{
+			"key": "POST_ID",
+			"value": "1"
+		},
+		{
+			"key": "UserId",
+			"value": "1",
+			"type": "string"
+		},
+		{
+			"key": "Skip_Verification_Request",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
